@@ -30,7 +30,7 @@
 **Very important!** This repository includes git submodules so that dependencies are less of a mess. The only downside is that the submodules do not clone automatically! When cloning the repository, it is imperitive that you use this command, otherwise you will have to initialize the submodules and clone them individually.
 
 ```
-git clone --recurse-submodules https://github.com/msfrt/PiLogger.git
+git clone --recurse-submodules https://github.com/msfrt/PiCAN.git
 ```
 
 # Hardware setup
@@ -191,9 +191,13 @@ sudo nmcli r wwan on
 
 You should be all set. You should be able to see a new interface after running `ifconfig`. Additionally, to make sure that you're actually getting service, you can run `ping -I <interface name in ifconfig menu> google.com`.
 
-# Logger
+# Telemetry Client
 
-To build and install the logger application on a raspberry pi, cd into the `logger` directory and read the [README.md](logger/README.md) file.
+To build and install the telemetry client application on a raspberry pi, cd into the `client` directory and read the [README.md](client/README.md) file.
+
+# Telemetry Server
+
+To build and install the telemetry server application on a raspberry pi, cd into the `server` directory and read the [README.md](server/README.md) file.
 
 # InfluxDB
 

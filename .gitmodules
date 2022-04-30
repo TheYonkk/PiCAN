@@ -1,9 +1,7 @@
-[submodule "logger/src/external/yaml-cpp"]
-	path = logger/src/external/yaml-cpp
-	url = https://github.com/jbeder/yaml-cpp
-[submodule "logger/src/external/dbcppp"]
-	path = logger/src/external/dbcppp
-	url = https://github.com/xR3b0rn/dbcppp.git
-[submodule "logger/src/external/influxdb-cpp-2"]
-	path = logger/src/external/influxdb-cpp-2
-	url = https://github.com/TheYonkk/influxdb-cpp-2.git
+[submodule "client/src/external/yaml-cpp"]
+	path = client/src/external/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
+	branch = yaml-cpp-0.6.3-89-ga6bbe0e
+[submodule "json"]
+	path = client/src/external/json
+	url = https://github.com/nlohmann/json.git

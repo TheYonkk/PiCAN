@@ -109,8 +109,6 @@ void* monitor(void* args){
         // read a CAN frame from the socket. This function call is blocking!
         nbytes = read(s, frame.get(), sizeof(struct can_frame));
 
-
-
         shared_ptr<CMessage> msg = make_shared<CMessage>();  // create a message from this bus
         msg->Timestamp();  // record the time
         msg->SetFrame(frame);  // set the frame ptr

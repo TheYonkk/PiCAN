@@ -19,14 +19,6 @@
 #include "interfaces.hpp"
 
 
-struct DBInfo {
-    std::string host;
-    int port;
-    std::string org;
-    std::string bucket;
-    std::string token;
-};
-
 
 /**
  * This struct should be populated and passed to the monitor thread as a void*
@@ -34,11 +26,12 @@ struct DBInfo {
  */
 struct ConsumerParams {
     std::unordered_map<Interface, std::string> bus_name_map;
-    std::unordered_map<Interface, std::string> bus_dbc_file_map;
     CThreadableMsgQueue<std::shared_ptr<CMessage>> *queue;
-    DBInfo dbinfo;
     int max_write_size;
     int max_write_delay;
+    std::string host;
+    std::string port;
+    std::string key;
 };
 
 void* consumer(void*);

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16.3)
 
 # name of the project
-project(logger)
+project(PiCANClient)
 
 # set c++ standard to c++17
 set(CMAKE_CXX_STANDARD 17)
@@ -10,9 +10,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # ensure that yaml-cpp is installed and include its directories
 add_subdirectory(external/yaml-cpp) # This is one way of referencing another CMake project
-
-# add dbccpp for dbc decoding (be sure that its dependencies are installed!)
-# add_subdirectory(external/dbcppp)
 
 
 # add local repository libraries
@@ -58,6 +55,7 @@ target_link_libraries(
               # yaml-cpp's CMakeLists.txt file
 )
 
+
 # link pthread
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
@@ -72,4 +70,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE dbcppp)
 
 
 # copy the config file to the build directory
-configure_file("logger.conf.yaml" "logger.conf" COPYONLY)
+configure_file("client.conf.yaml" "client.conf" COPYONLY)

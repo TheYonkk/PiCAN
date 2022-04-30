@@ -23,7 +23,7 @@
 using namespace::std;
 
 /// The default name of the logger configuration file
-const string DEFAULT_CONFIG_FILE = "logger.conf";
+const string DEFAULT_CONFIG_FILE = "client.conf";
 
 /// The default max write size for batch write metrics. Configurable in the config file
 const int DEFAULT_MAX_WRITE_SIZE = 5000;
@@ -33,7 +33,7 @@ const int DEFAULT_MAX_WRITE_DELAY = 5000;
 
 /// setting this boolean as true will output debugging statements to
 /// the standard output stream
-extern const bool LOGGER_DEBUG = true;
+extern const bool LOGGER_DEBUG = false;
 
 /// This number probably shouldn't be messed with. It's just so that we don't have
 /// to deal with dynamic array allocation and whatnot
@@ -142,33 +142,33 @@ int main(int argc, char *argv[])
     }
 
 
-    // Get the database information
-    DBInfo dbinfo;
+    // // Get the database information
+    // DBInfo dbinfo;
 
-    if (config["database"]) {
+    // if (config["database"]) {
 
-        auto dbinfo_node = config["database"];
+    //     auto dbinfo_node = config["database"];
 
-        try {
-            dbinfo.host = dbinfo_node["host"].as<std::string>();
-            dbinfo.port = dbinfo_node["port"].as<int>();
-            dbinfo.org = dbinfo_node["org"].as<std::string>();
-            dbinfo.bucket = dbinfo_node["bucket"].as<std::string>();
-            dbinfo.token = dbinfo_node["token"].as<std::string>();
+    //     try {
+    //         dbinfo.host = dbinfo_node["host"].as<std::string>();
+    //         dbinfo.port = dbinfo_node["port"].as<int>();
+    //         dbinfo.org = dbinfo_node["org"].as<std::string>();
+    //         dbinfo.bucket = dbinfo_node["bucket"].as<std::string>();
+    //         dbinfo.token = dbinfo_node["token"].as<std::string>();
 
-        } catch (const std::exception& ex) {
+    //     } catch (const std::exception& ex) {
 
-            cerr << "ERROR: The database configuration parameters were either missing or incorrectly formatted!" << endl;
-            exit( 1 );
+    //         cerr << "ERROR: The database configuration parameters were either missing or incorrectly formatted!" << endl;
+    //         exit( 1 );
 
-        }
+    //     }
 
         
 
-    } else {
-        cerr << "ERROR: You must configure the database!" << endl;
-        exit( 1 );
-    }
+    // } else {
+    //     cerr << "ERROR: You must configure the database!" << endl;
+    //     exit( 1 );
+    // }
 
 
     // optional configuration options in the config file
@@ -186,7 +186,6 @@ int main(int argc, char *argv[])
 
 
     // loop through the specified interfaces to grab the number of required monitoring threads and DBC info
-    unordered_map<Interface, string> bus_dbc_name_map;  /// will hold the interface names and the respective dbcs
     unordered_map<Interface, string> bus_name_map;  /// will hold the interface names and their given names (ex. can0 -> "CAN1")
     if (config["interfaces"]) {
 
@@ -197,20 +196,14 @@ int main(int argc, char *argv[])
             
             // first is the interface name for socketcan
             string iface = it->first.as<std::string>();
+            // second is the bus name that will be attached to the messages from this CAN socket
+            string name = it->second.as<std::string>();
 
-            // info node contains bus name and dbc path
-            auto iface_info = it->second;
-
-            // extract info from the socketcan YAML node
-            string name = iface_info["name"].as<std::string>();
-            string dbc = iface_info["dbc"].as<std::string>();
-
-            if (LOGGER_DEBUG) std::cout << "Found " << iface << " named " << name << " with dbc " << dbc << " in config." << endl;
+            if (LOGGER_DEBUG) std::cout << "Found " << iface << " named " << name << " in config." << endl;
 
             // add the interface name and the dbc name to the map
             Interface current_iface = string_to_iface(iface);
             bus_name_map[current_iface] = name;
-            bus_dbc_name_map[current_iface] = dbc;
             
         }
 
@@ -233,10 +226,10 @@ int main(int argc, char *argv[])
 
 
 
-    // loop through the configured CAN interfaces and create threads for their monotors
+    // loop through the configured CAN interfaces and create threads for their monitors
     MonitorParams mon_params_ary[monitor_count];
     int current_thread_idx = 0;
-    for (const auto & [ iface, dbc_path ] : bus_dbc_name_map) {
+    for (const auto & [ iface, bus_name ] : bus_name_map) {
 
         // populate the parameters for the current interface's monitoring thread
         mon_params_ary[current_thread_idx].iface_name = iface;
@@ -259,11 +252,12 @@ int main(int argc, char *argv[])
     // create the consumer thread
     ConsumerParams con_params;
     con_params.bus_name_map = bus_name_map;
-    con_params.bus_dbc_file_map = bus_dbc_name_map;
     con_params.queue = &decoder_queue;
-    con_params.dbinfo = dbinfo;
     con_params.max_write_size = max_write_size;
     con_params.max_write_delay = max_write_delay;
+    con_params.host = config["server"]["host"].as<std::string>();
+    con_params.port = config["server"]["port"].as<std::string>();
+    con_params.key = config["key"].as<std::string>();
     pthread_t consumer_thread;
     if (pthread_create(&consumer_thread, NULL, consumer, (void *)(&con_params))) {
         sem_wait(&stdout_sem);

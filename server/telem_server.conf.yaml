@@ -1,0 +1,24 @@
+# -----------------------------------------------------------------------------
+# Cellular telemetry server YAML default configuration file
+#
+# 
+#
+# -----------------------------------------------------------------------------
+
+# information for the InfluxDB database where the data should be logged
+db_server:
+    url: "http://localhost:8086"
+    org: msufsae
+    token: "h2lp9FygVQy-7_fuU0ncSDgWTkXJtOu2Xi_O5nqlpV7xLO2VB84aHmmUAc-oIlP08YgUgfWTPG7MT1FD5kBpiQ=="
+
+
+# Vehicle configuration
+vehicles:
+  sr22:  # the key of the vehicle that is sent from the client. enter exactly as it appears in the client config
+    busses:  # list of the CAN buses as they are *renamed* to in the client. These are NOT the socketcan interfaces. These are also defined in the client config. The value in the pair is the full path to the respective DBC to use.
+      CAN1: '/home/sparty/Electrical-SR22/DBCs/CAN1.dbc'
+      CAN2: '/home/sparty/Electrical-SR22/DBCs/CAN2.dbc'
+    db_bucket: 'sr22'  # the bucket to write to in InfluxDB
+
+
+

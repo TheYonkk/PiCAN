@@ -24,7 +24,6 @@
  */
 struct MonitorParams {
     Interface iface_name;
-    std::string dbc;
     CThreadableMsgQueue<std::shared_ptr<CMessage>> *queue;
 };
 
