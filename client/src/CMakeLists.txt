@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16.3)
 
 # name of the project
-project(PiCANClient)
+project(telem_client)
 
 # set c++ standard to c++17
 set(CMAKE_CXX_STANDARD 17)

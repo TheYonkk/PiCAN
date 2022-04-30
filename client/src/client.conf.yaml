@@ -9,7 +9,7 @@
 server:
     # host: 2606:5580:310:7fcf:9a90:96ff:fee3:94bc # data.msuformularacing.com
     host: data.msuformularacing.com
-    port: 6969
+    port: 4949
 
 
 # key for the server to recognize this vehicle
