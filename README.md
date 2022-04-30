@@ -30,7 +30,7 @@
 **Very important!** This repository includes git submodules so that dependencies are less of a mess. The only downside is that the submodules do not clone automatically! When cloning the repository, it is imperitive that you use this command, otherwise you will have to initialize the submodules and clone them individually.
 
 ```
-git clone --recurse-submodules https://github.com/msfrt/PiCAN.git
+git clone --recurse-submodules https://github.com/TheYonkk/PiCAN.git
 ```
 
 # Hardware setup
