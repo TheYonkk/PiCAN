@@ -1,20 +1,20 @@
 #!/bin/bash
 
 # make a folder in the etc directory to store the configuration file
-sudo mkdir /etc/PiLogger
+sudo mkdir /etc/telem_client
 
-# disable the logger if it exists
-sudo systemctl stop PiLogger
+# disable the client if it exists
+sudo systemctl stop telem_client
 
 # move the config file to the etc directory and move the binary file to the bin directory
-sudo cp src/build/logger.conf /etc/PiLogger/
-sudo cp src/build/logger /bin/
+sudo cp src/build/client.conf /etc/telem_client/
+sudo cp src/build/telem_client /bin/
 
 # copy service description to system-wide services directory
-cp PiLogger.service /etc/systemd/system/
+sudo cp telem_client.service /etc/systemd/system/
 
 # enable the services to start up on boot
-sudo systemctl enable PiLogger
-sudo systemctl start PiLogger
+sudo systemctl enable telem_client
+sudo systemctl start telem_client
 
 
