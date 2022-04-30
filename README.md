@@ -1,4 +1,4 @@
-# PiLogger <!-- omit in toc -->
+ # PiLogger <!-- omit in toc -->
 
 - [Clone the repository](#clone-the-repository)
 - [Hardware setup](#hardware-setup)
