@@ -1,0 +1,12 @@
+[Unit]
+Description=Telemetry server service file
+Documentation=https://github.com/TheYonkk/PiCAN
+After=multi-user.target
+
+[Service]
+Restart=on-failure
+RestartSec=1
+ExecStart=cd /home/sparty/PiCAN/server && source venv/bin/activate && python3 telem_server.py
+
+[Install]
+WantedBy=multi-user.target
