@@ -13,9 +13,6 @@ import cantools
 # import thread module
 from _thread import *
 
-HOST = ''  # any host - localhost or external
-PORT = 4949  # Port to listen on (non-privileged ports are > 1023)
-
 # the length of the first message for every json recieve. This sets up the rest of the transaction.
 INITIAL_MESSAGE_SEND_LENGTH_BYTES = 64
 
@@ -61,7 +58,7 @@ def main(config_file):
         family = socket.AF_INET
         dualstack_ipv6 = False
 
-    address = (HOST, PORT)
+    address = (config["host"], config["port"])
 
     with socket.create_server(address, family=family, dualstack_ipv6=dualstack_ipv6) as sock:
 

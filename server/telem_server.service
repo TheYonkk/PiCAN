@@ -6,7 +6,7 @@ After=multi-user.target
 [Service]
 Restart=on-failure
 RestartSec=1
-ExecStart=cd /home/sparty/PiCAN/server && source venv/bin/activate && python3 telem_server.py
+ExecStart=/home/sparty/PiCAN/server/venv/bin/python3 /home/sparty/PiCAN/server/telem_server.py -c /home/sparty/PiCAN/server/telem_server.conf
 
 [Install]
 WantedBy=multi-user.target
