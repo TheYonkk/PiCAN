@@ -2,28 +2,20 @@
 
 import socket
 import argparse
-import time
-import numpy as np
 
 from yaml import safe_load
 import json
 
 from influxdb_client import InfluxDBClient, Point, WriteOptions
-from influxdb_client.client.write_api import SYNCHRONOUS
 
 import cantools
 
 # import thread module
 from _thread import *
-import threading
-
-
-
-HOST = ''           # any host - localhost or external
-PORT = 6969         # Port to listen on (non-privileged ports are > 1023)
 
 # the length of the first message for every json recieve. This sets up the rest of the transaction.
 INITIAL_MESSAGE_SEND_LENGTH_BYTES = 64
+
 
 def success_cb(details, data):
     url, token, org = details
@@ -31,15 +23,16 @@ def success_cb(details, data):
     data = data.decode('utf-8').split('\n')
     print('Total Rows Inserted:', len(data))
 
+
 def error_cb(details, data, exception):
     print(exception)
+
 
 def retry_cb(details, data, exception):
     print('Retrying because of an exception:', exception)
 
 
 def main(config_file):
-
     with open(config_file, "r") as fp:
         config = safe_load(fp)
 
@@ -55,19 +48,17 @@ def main(config_file):
         for bus, dbc_path in config["vehicles"][vehicle]["busses"].items():
             vehicle_info_dict[vehicle][bus] = cantools.database.load_file(dbc_path)
 
-
     # verify that IPv6 and IPv4 dual-stack is possible
     if socket.has_dualstack_ipv6():
-        family=socket.AF_INET6
-        dualstack_ipv6=True
+        family = socket.AF_INET6
+        dualstack_ipv6 = True
 
     else:
         # if not dual stack, revert to IPv4, since *most* platforms support IPv4
-        family=socket.AF_INET
-        dualstack_ipv6=False
+        family = socket.AF_INET
+        dualstack_ipv6 = False
 
-
-    address = (HOST, PORT)
+    address = (config["host"], config["port"])
 
     with socket.create_server(address, family=family, dualstack_ipv6=dualstack_ipv6) as sock:
 
@@ -77,7 +68,6 @@ def main(config_file):
             # start a new thread to handle this connection
             params = (conn, addr, vehicle_info_dict, config["db_server"])
             start_new_thread(accept_connection, params)
-
 
 
 def accept_connection(conn, addr, vehicles_dict, db_info_dict):
@@ -101,7 +91,6 @@ def accept_connection(conn, addr, vehicles_dict, db_info_dict):
         bytes_recieved = 0
         json_string = ""
         while bytes_recieved < json_length:
-
             data = conn.recv(4096)
 
             # decode the bytes into a python string and append it to the json
@@ -110,7 +99,6 @@ def accept_connection(conn, addr, vehicles_dict, db_info_dict):
 
             # add to the total bytes recieved
             bytes_recieved += len(data)
-
 
         # parse the json string
         json_decoded = json.loads(json_string)
@@ -129,8 +117,8 @@ def accept_connection(conn, addr, vehicles_dict, db_info_dict):
         # flushed after the `with` statement is flushed
         client = InfluxDBClient(url=db_info_dict["url"], token=db_info_dict["token"], org=db_info_dict["org"])
         # write_api = client.write_api(write_options=SYNCHRONOUS)
-        write_api = client.write_api(success_callback=success_cb, error_callback=error_cb, retry_callback=retry_cb) #, write_options=SYNCHRONOUS)
-
+        write_api = client.write_api(success_callback=success_cb, error_callback=error_cb,
+                                     retry_callback=retry_cb)  # , write_options=SYNCHRONOUS)
 
         for bus, messages in json_decoded["messages"].items():
 
@@ -187,19 +175,10 @@ def accept_connection(conn, addr, vehicles_dict, db_info_dict):
         write_api.close()
 
 
-
-
-
-        
-
-
-
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description='Create a server that listens for incoming CAN data.')
-    parser.add_argument('-c', '--config', type=str, default="telem_server.conf.yaml",
+    parser.add_argument('-c', '--config', type=str, default="telem_server.conf",
                         help='The path to the YAML configuration file.')
     args = parser.parse_args()
-
 
     main(args.config)
