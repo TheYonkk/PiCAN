@@ -85,6 +85,8 @@ Log out, then log back in. You should be able to run `i2cdetect -y 1` without su
 
 Install the api that interfaces (*sometimes, only if you're lucky*) with the battery UPS. `pip3 install power-api` Here's the [repo](https://github.com/sixfab/sixfab-power-python-api). The API is essentially a Python wrapper for their i2c communication protocol.
 
+In order to get this module installed for all users (so that telegraf can use it), I would suggest installing power_api via the root user. `sudo su` and then `pip3 install power-api`. To log out of the root user, you can use the command `exit`.
+
 ## Install Telegraf
 
 Telegraf is a program from the makers of InfluxDB that writes usage metrics to an influx instance. This is very useful to have on the raspberry pi. The installation instructs are on there website, [here](https://docs.influxdata.com/telegraf/v1.20/introduction/installation/), but you should just be able to run `sudo apt-get update && sudo apt-get install telegraf`.
@@ -165,6 +167,9 @@ Cron is a service that allows you to run commands at a predetermined time interv
 # bring up CAN interfaces upon startup
 @reboot /sbin/ip link set can0 up type can bitrate 1000000
 @reboot /sbin/ip link set can1 up type can bitrate 1000000
+
+# give all permissions for i2c communications
+@reboot chmod 777 /dev/i2c-1
 ```
 
 ## Set up modem manager for cellular connection
